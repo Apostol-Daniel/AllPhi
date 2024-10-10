@@ -16,16 +16,36 @@ namespace AllPhi.Api.Controllers;
 public class OrdersController : ControllerBase
 {
     private readonly IMediator _mediator;
+    private readonly ILogger<OrdersController> _logger;
 
-    public OrdersController(IMediator mediator) => _mediator = mediator;
+    public OrdersController(IMediator mediator, ILogger<OrdersController> logger)
+    {
+        _mediator = mediator;
+        _logger = logger;
+
+    }
 
     [HttpPost]
     [ProducesResponseType(typeof(OrderDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<OrderDto>> CreateOrder([FromBody] CreateOrderDto orderDto)
     {
-        var order = await _mediator.Send(new CreateOrderCommand(orderDto));
-        return Created();
+        _logger.LogInformation("Received request to create order for customer {CustomerId}", orderDto.CustomerId);
+        
+        try
+        {
+            var order = await _mediator.Send(new CreateOrderCommand(orderDto));
+
+            _logger.LogInformation("Successfully created order {OrderId}", order.Id);
+
+            return StatusCode(StatusCodes.Status201Created, order);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Order could not be created");
+            Console.WriteLine(ex);
+            return NotFound();
+        }
     }
 
     // [HttpGet("{id}")]
@@ -43,8 +63,20 @@ public class OrdersController : ControllerBase
     [ProducesResponseType(typeof(List<OrderDto>), StatusCodes.Status200OK)]
     public async Task<ActionResult<List<OrderDto>>> GetCustomerOrders(int customerId)
     {
-        var orders = await _mediator.Send(new GetCustomerOrdersQuery(customerId));
-        return Ok(orders);
+        _logger.LogInformation("Retrieving orders for customer {CustomerId}", customerId);
+
+        try
+        {
+            var orders = await _mediator.Send(new GetCustomerOrdersQuery(customerId));
+            _logger.LogInformation("Retrieved {OrderCount} orders for customer {CustomerId}", orders.Count, customerId);
+            return Ok(orders);
+        }
+        catch (NotFoundException ex)
+        {   
+            _logger.LogWarning(ex, "Customer {CustomerId} not found for cancellation", customerId);
+            Console.WriteLine(ex);
+            return NotFound();
+        }
     }
 
     [HttpPost("{id}/cancel")]
@@ -52,13 +84,17 @@ public class OrdersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<OrderDto>> CancelOrder(int id)
     {
+        _logger.LogInformation("Attempting to cancel order {OrderId}", id);
+        
         try
         {
             var order = await _mediator.Send(new CancelOrderCommand(id));
+            _logger.LogInformation("Successfully cancelled order {OrderId}", id);
             return Ok(order);
         }
-        catch (NotFoundException)
+        catch (Exception ex)
         {
+            _logger.LogWarning(ex, "Order {OrderId} could not be cancelled", id);
             return NotFound();
         }
     }
@@ -70,8 +106,22 @@ public class OrdersController : ControllerBase
         [FromQuery] DateTime? endDate,
         [FromQuery] int? customerId)
     {
-        var orders = await _mediator.Send(new SearchOrdersQuery(startDate, endDate, customerId));
-        return Ok(orders);
+        _logger.LogInformation("Retrieving orders for customer {CustomerId}",customerId);
+
+        try
+        {
+            var orders = await _mediator.Send(new SearchOrdersQuery(startDate, endDate, customerId));
+            
+            _logger.LogInformation("Retrieved orders for customer {CustomerId}",customerId);
+
+            return Ok(orders);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogInformation("Could not retrieve Orders for customer {CustomerId}", customerId);
+            Console.WriteLine(ex);
+            return NotFound();
+        }
     }
 
     [HttpGet("customer/{customerId}/spending")]
