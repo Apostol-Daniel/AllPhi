@@ -42,21 +42,10 @@ public class OrdersController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "Order could not be created");
+            _logger.LogWarning(ex, "Error while creating order");
             return NotFound();
         }
     }
-
-    // [HttpGet("{id}")]
-    // [ProducesResponseType(typeof(OrderDto), StatusCodes.Status200OK)]
-    // [ProducesResponseType(StatusCodes.Status404NotFound)]
-    // public async Task<ActionResult<OrderDto>> GetOrder(int id)
-    // {
-    //     var order = await _mediator.Send(new GetOrderByIdQuery(id));
-    //     if (order == null)
-    //         return NotFound();
-    //     return Ok(order);
-    // }
 
     [HttpGet("customer/{customerId}")]
     [ProducesResponseType(typeof(List<OrderDto>), StatusCodes.Status200OK)]
@@ -72,7 +61,7 @@ public class OrdersController : ControllerBase
         }
         catch (NotFoundException ex)
         {   
-            _logger.LogWarning(ex, "Customer {CustomerId} not found for cancellation", customerId);
+            _logger.LogWarning(ex, "Error while retrieving orders for customer {CustomerId} ", customerId);
             return NotFound();
         }
     }
@@ -92,7 +81,7 @@ public class OrdersController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "Order {OrderId} could not be cancelled", id);
+            _logger.LogWarning(ex, "Error while cancelling order {OrderId}", id);
             return NotFound();
         }
     }
