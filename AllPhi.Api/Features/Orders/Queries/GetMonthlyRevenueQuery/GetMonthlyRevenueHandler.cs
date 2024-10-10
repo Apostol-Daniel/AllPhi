@@ -2,7 +2,7 @@ using AllPhi.Api.Data;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace AllPhi.Api.Features.Customers.Queries.GetMonthlyRevenueQuery;
+namespace AllPhi.Api.Features.Orders.Queries.GetMonthlyRevenueQuery;
 
 public class GetMonthlyRevenueHandler : IRequestHandler<GetMonthlyRevenueQuery, decimal>
 {

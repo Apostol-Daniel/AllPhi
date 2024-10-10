@@ -2,7 +2,7 @@ using AllPhi.Api.Data;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace AllPhi.Api.Features.Customers.Queries.GetCustomerSpendingQuery;
+namespace AllPhi.Api.Features.Orders.Queries.GetCustomerSpendingQuery;
 
 public class GetCustomerSpendingHandler : IRequestHandler<GetCustomerSpendingQuery, decimal>
 {

@@ -1,7 +1,7 @@
 using AllPhi.Api.Features.Customers.Commands;
 using AllPhi.Api.Features.Customers.Dtos;
-using AllPhi.Api.Features.Customers.Queries;
 using AllPhi.Api.Features.Customers.Queries.GetCustomerByEmailQuery;
+using AllPhi.Api.Features.Customers.Queries.GetCustomersQuery;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
