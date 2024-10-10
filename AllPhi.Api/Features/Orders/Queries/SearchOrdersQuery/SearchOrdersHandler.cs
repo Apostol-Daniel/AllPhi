@@ -21,8 +21,8 @@ public class SearchOrdersHandler : IRequestHandler<SearchOrdersQuery, List<Order
         if (request.EndDate.HasValue)
             query = query.Where(o => o.CreationDate <= request.EndDate.Value);
 
-        if (request.CustomerId.HasValue)
-            query = query.Where(o => o.CustomerId == request.CustomerId.Value);
+        if (request.CustomersId is not null && request.CustomersId.Any())
+            query = query.Where(o => request.CustomersId.Contains(o.CustomerId));
 
         return await query
             .Select(o => new OrderDto(o.Id, o.Description, o.Price, 

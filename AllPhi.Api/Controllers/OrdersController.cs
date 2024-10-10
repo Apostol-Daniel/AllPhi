@@ -91,21 +91,21 @@ public class OrdersController : ControllerBase
     public async Task<ActionResult<List<OrderDto>>> SearchOrders(
         [FromQuery] DateTime? startDate,
         [FromQuery] DateTime? endDate,
-        [FromQuery] int? customerId)
+        [FromQuery] int[]? customerId)
     {
-        _logger.LogInformation("Retrieving orders for customer {CustomerId}",customerId);
+        _logger.LogInformation("Retrieving orders for customers");
 
         try
         {
             var orders = await _mediator.Send(new SearchOrdersQuery(startDate, endDate, customerId));
             
-            _logger.LogInformation("Retrieved orders for customer {CustomerId}",customerId);
+            _logger.LogInformation("Retrieved orders for customer");
 
             return Ok(orders);
         }
         catch (Exception ex)
         {
-            _logger.LogInformation("Error while retrieving Orders for customer {CustomerId}", customerId);
+            _logger.LogInformation("Error while retrieving Orders for customer");
             return NotFound();
         }
     }

@@ -3,5 +3,5 @@ using MediatR;
 
 namespace AllPhi.Api.Features.Orders.Queries.SearchOrdersQuery;
 
-public record SearchOrdersQuery(DateTime? StartDate, DateTime? EndDate, int? CustomerId) 
+public record SearchOrdersQuery(DateTime? StartDate, DateTime? EndDate, int[]? CustomersId) 
     : IRequest<List<OrderDto>>;
