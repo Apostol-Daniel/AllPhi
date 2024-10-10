@@ -43,7 +43,6 @@ public class OrdersController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogWarning(ex, "Order could not be created");
-            Console.WriteLine(ex);
             return NotFound();
         }
     }
@@ -74,7 +73,6 @@ public class OrdersController : ControllerBase
         catch (NotFoundException ex)
         {   
             _logger.LogWarning(ex, "Customer {CustomerId} not found for cancellation", customerId);
-            Console.WriteLine(ex);
             return NotFound();
         }
     }
@@ -118,8 +116,7 @@ public class OrdersController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogInformation("Could not retrieve Orders for customer {CustomerId}", customerId);
-            Console.WriteLine(ex);
+            _logger.LogInformation("Error while retrieving Orders for customer {CustomerId}", customerId);
             return NotFound();
         }
     }
@@ -128,15 +125,41 @@ public class OrdersController : ControllerBase
     [ProducesResponseType(typeof(decimal), StatusCodes.Status200OK)]
     public async Task<ActionResult<decimal>> GetCustomerSpending(int customerId)
     {
-        var spending = await _mediator.Send(new GetCustomerSpendingQuery(customerId));
-        return Ok(spending);
+        _logger.LogInformation("Retrieving total amount spent by a customer {CustomerId}",customerId);
+        
+        try
+        {
+            var spending = await _mediator.Send(new GetCustomerSpendingQuery(customerId));
+            
+            _logger.LogInformation("Successfully retrieved total amount spent by a customer {CustomerId}",customerId);
+            
+            return Ok(spending);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogInformation("Error while retrieving total amount spent by a customer {CustomerId}",customerId);
+            return NotFound();
+        }
     }
 
     [HttpGet("revenue/{year}/{month}")]
     [ProducesResponseType(typeof(decimal), StatusCodes.Status200OK)]
     public async Task<ActionResult<decimal>> GetMonthlyRevenue(int year, int month)
     {
-        var revenue = await _mediator.Send(new GetMonthlyRevenueQuery(year, month));
-        return Ok(revenue);
+        _logger.LogInformation("Retrieving monthly revenue");
+        
+        try
+        {
+            var revenue = await _mediator.Send(new GetMonthlyRevenueQuery(year, month));
+            
+            _logger.LogInformation("Successfully retrieved monthly revenue");
+            
+            return Ok(revenue);
+        }
+        catch (Exception e)
+        {
+            _logger.LogInformation("Error while retrieving monthly revenue");
+            return NotFound();
+        }
     }
 }
