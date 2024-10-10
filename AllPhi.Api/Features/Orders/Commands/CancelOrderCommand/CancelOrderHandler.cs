@@ -1,5 +1,6 @@
 using AllPhi.Api.Data;
 using AllPhi.Api.Features.Orders.Dtos;
+using AllPhi.Api.Middleware.Exceptions;
 using MediatR;
 
 namespace AllPhi.Api.Features.Orders.Commands.CancelOrderCommand;
@@ -15,7 +16,7 @@ public class CancelOrderHandler : IRequestHandler<CancelOrderCommand, OrderDto>
         var order = await _context.Orders.FindAsync(new object[] { request.OrderId }, cancellationToken);
         
         if (order == null)
-            throw new Exception($"Order with ID {request.OrderId} not found.");
+            throw new NotFoundException($"Order with ID {request.OrderId} not found.");
 
         order.IsCancelled = true;
         await _context.SaveChangesAsync(cancellationToken);
