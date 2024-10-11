@@ -43,7 +43,7 @@ public class OrdersController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogWarning(ex, "Error while creating order");
-            return NotFound();
+            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An unexpected error occurred" });
         }
     }
 
@@ -56,13 +56,14 @@ public class OrdersController : ControllerBase
         try
         {
             var orders = await _mediator.Send(new GetCustomerOrdersQuery(customerId));
+            
             _logger.LogInformation("Retrieved {OrderCount} orders for customer {CustomerId}", orders.Count, customerId);
             return Ok(orders);
         }
-        catch (NotFoundException ex)
+        catch (Exception ex)
         {   
             _logger.LogWarning(ex, "Error while retrieving orders for customer {CustomerId} ", customerId);
-            return NotFound();
+            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An unexpected error occurred" });
         }
     }
 
@@ -79,10 +80,15 @@ public class OrdersController : ControllerBase
             _logger.LogInformation("Successfully cancelled order {OrderId}", id);
             return Ok(order);
         }
+        catch (NotFoundException ex)
+        {   
+            _logger.LogWarning(ex, "Error while cancelling order {OrderId}", id);
+            return NotFound();
+        }
         catch (Exception ex)
         {
             _logger.LogWarning(ex, "Error while cancelling order {OrderId}", id);
-            return NotFound();
+            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An unexpected error occurred" });
         }
     }
 
@@ -105,8 +111,8 @@ public class OrdersController : ControllerBase
         }
         catch (Exception ex)
         {
-            _logger.LogInformation("Error while retrieving Orders for customer");
-            return NotFound();
+            _logger.LogInformation(ex,"Error while retrieving Orders for customer");
+            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An unexpected error occurred" });
         }
     }
 
@@ -124,10 +130,15 @@ public class OrdersController : ControllerBase
             
             return Ok(spending);
         }
+        catch (NotFoundException ex)
+        {   
+            _logger.LogWarning(ex, "Error while retrieving total amount spent by a customer {CustomerId} ", customerId);
+            return NotFound();
+        }
         catch (Exception ex)
         {
-            _logger.LogInformation("Error while retrieving total amount spent by a customer {CustomerId}",customerId);
-            return NotFound();
+            _logger.LogInformation(ex,"Error while retrieving total amount spent by a customer {CustomerId}",customerId);
+            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An unexpected error occurred" });
         }
     }
 
@@ -145,10 +156,10 @@ public class OrdersController : ControllerBase
             
             return Ok(revenue);
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            _logger.LogInformation("Error while retrieving monthly revenue");
-            return NotFound();
+            _logger.LogInformation(ex,"Error while retrieving monthly revenue");
+            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An unexpected error occurred" });
         }
     }
 }
