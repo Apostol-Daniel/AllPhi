@@ -40,6 +40,11 @@ public class OrdersController : ControllerBase
 
             return StatusCode(StatusCodes.Status201Created, order);
         }
+        catch (NotFoundException ex)
+        {   
+            _logger.LogWarning(ex, "Error while creating order");
+            return NotFound();
+        }
         catch (Exception ex)
         {
             _logger.LogWarning(ex, "Error while creating order");

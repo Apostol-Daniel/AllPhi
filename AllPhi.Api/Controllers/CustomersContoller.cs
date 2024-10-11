@@ -55,7 +55,7 @@ public class CustomersController : ControllerBase
             if (customer is null)
             {
                 _logger.LogWarning("Customer {CustomerId} not found", id);
-                return NotFound(new { error = "Customer not found" });
+                return NotFound();
             }
             
             _logger.LogInformation("Successfully retrieved {CustomerId}", id);
