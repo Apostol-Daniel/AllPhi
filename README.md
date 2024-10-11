@@ -39,7 +39,7 @@ Note: orders can be cancelled continuously, even if order is already cancelled
 
 -	Use dotnet 8 with C#
 -	The API should be RESTful (think about url, request methods, response codes, maybe even caching)
--	Use Mediatr for logic
+-	Use Mediatr for logic - with CQRS
 -	Use a validation library - FluentValidation
 -	Use EntityFramework for database access
 -	Use IOC/DI, built in with dotnet or any other IOC container of your choice (Autofac…) - Basic microsoft DI
