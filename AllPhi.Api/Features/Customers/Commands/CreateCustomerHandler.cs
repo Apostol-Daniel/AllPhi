@@ -1,6 +1,7 @@
 using AllPhi.Api.Data;
+using AllPhi.Api.Data.Models;
 using AllPhi.Api.Features.Customers.Dtos;
-using AllPhi.Api.Models;
+using AllPhi.Api.Middleware.Exceptions;
 using MediatR;
 
 namespace AllPhi.Api.Features.Customers.Commands;
@@ -22,6 +23,13 @@ public class CreateCustomerHandler : IRequestHandler<CreateCustomerCommand, Cust
             LastName = request.customer.LastName,
             Email = request.customer.Email
         };
+
+        bool isEmailAlreadyInUse = _context.Customers.Any(c => c.Email == request.customer.Email);
+
+        if (isEmailAlreadyInUse)
+        {
+            throw new DuplicateEmailException("Email already in use");
+        }
 
         _context.Customers.Add(customer);
         await _context.SaveChangesAsync(cancellationToken);

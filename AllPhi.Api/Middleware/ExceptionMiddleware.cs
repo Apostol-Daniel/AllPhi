@@ -34,6 +34,7 @@ public class ExceptionHandlingMiddleware
         context.Response.StatusCode = exception switch
         {
             NotFoundException => StatusCodes.Status404NotFound,
+            DuplicateEmailException => StatusCodes.Status400BadRequest,
             ValidationException => StatusCodes.Status400BadRequest,
             _ => StatusCodes.Status500InternalServerError
         };
@@ -41,7 +42,7 @@ public class ExceptionHandlingMiddleware
         var response = new
         {
             error = exception.Message,
-            stackTrace = exception is NotFoundException or ValidationException 
+            stackTrace = exception is NotFoundException or ValidationException or DuplicateEmailException 
                 ? null 
                 : exception.StackTrace
         };

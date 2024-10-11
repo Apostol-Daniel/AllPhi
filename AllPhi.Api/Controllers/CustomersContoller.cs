@@ -3,6 +3,7 @@ using AllPhi.Api.Features.Customers.Dtos;
 using AllPhi.Api.Features.Customers.Queries.GetCustomerByEmailQuery;
 using AllPhi.Api.Features.Customers.Queries.GetCustomersByIdQuery;
 using AllPhi.Api.Features.Customers.Queries.GetCustomersQuery;
+using AllPhi.Api.Middleware.Exceptions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -98,10 +99,15 @@ public class CustomersController : ControllerBase
         try
         {
             var customer = await _mediator.Send(new CreateCustomerCommand(customerDto));
-            
+
             _logger.LogInformation("New customer successfully created");
 
             return StatusCode(StatusCodes.Status201Created, customer);
+        }
+        catch (DuplicateEmailException dex)
+        {
+            _logger.LogInformation(dex,"Duplicate email found when creating new customer");
+            return BadRequest("Email already in use. Please choose another one");
         }
         catch (Exception ex)
         {
