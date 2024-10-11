@@ -16,8 +16,10 @@ public class GetCustomerByIdHandler : IRequestHandler<GetCustomerByIdQuery, Cust
     
     public async Task<CustomerDto?> Handle(GetCustomerByIdQuery request, CancellationToken cancellationToken)
     {
-        return await _context.Customers.Select(c => new CustomerDto(c.Id, c.FirstName, c.LastName, c.Email))
-            .FirstOrDefaultAsync(c => c.Id == request.Id, cancellationToken: cancellationToken);
+        return await _context.Customers
+            .Where(c => c.Id == request.Id)
+            .Select(c => new CustomerDto(c.Id, c.FirstName, c.LastName, c.Email))
+            .FirstOrDefaultAsync(cancellationToken: cancellationToken);
             
     }
 }
