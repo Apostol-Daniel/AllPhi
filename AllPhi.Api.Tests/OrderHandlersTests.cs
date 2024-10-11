@@ -4,7 +4,6 @@ using AllPhi.Api.Features.Orders.Commands.CreateOrderCommand;
 using AllPhi.Api.Features.Orders.Dtos;
 using AllPhi.Api.Features.Orders.Queries.GetCustomerOrdersQuery;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace AllPhi.Api.Tests;
 
