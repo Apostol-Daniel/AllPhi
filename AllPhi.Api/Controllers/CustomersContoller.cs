@@ -34,10 +34,26 @@ public class CustomersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<CustomerDto>> GetCustomer(int id)
     {
-        var customer = await _mediator.Send(new GetCustomerByIdQuery(id));
-        if (customer is null)
-            return NotFound();
-        return Ok(customer);
+        _logger.LogInformation("Retrieving customer {CustomerId}", id);
+        try
+        {
+            var customer = await _mediator.Send(new GetCustomerByIdQuery(id));
+            
+            if (customer is null)
+            {
+                return NotFound();
+            }
+            
+            _logger.LogInformation("Successfully retrieved {CustomerId}", id);
+
+            return Ok(customer);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogInformation(ex,"Error while retrieving {CustomerId}", id);
+            throw;
+        }
+        
     }
 
     [HttpGet("search")]
@@ -51,9 +67,9 @@ public class CustomersController : ControllerBase
             var customers = await _mediator.Send(new GetCustomerByEmailQuery(email));
             return Ok(customers);
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            Console.WriteLine(e);
+            _logger.LogInformation(ex,"Error while retrieving by email {Email}", email);
             return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
