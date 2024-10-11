@@ -25,8 +25,21 @@ public class CustomersController : ControllerBase
     [ProducesResponseType(typeof(List<CustomerDto>), StatusCodes.Status200OK)]
     public async Task<ActionResult<List<CustomerDto>>> GetCustomers()
     {
-        var customers = await _mediator.Send(new GetCustomersQuery());
-        return Ok(customers);
+        _logger.LogInformation("Retrieving customers");
+        
+        try
+        {
+            var customers = await _mediator.Send(new GetCustomersQuery());
+            
+            _logger.LogInformation("Successfully retrieved customers");
+            
+            return Ok(customers);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogInformation(ex,"Error while retrieving customers");
+            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An unexpected error occurred" });
+        }
     }
     
     [HttpGet("{id}")]
@@ -41,7 +54,8 @@ public class CustomersController : ControllerBase
             
             if (customer is null)
             {
-                return NotFound();
+                _logger.LogWarning("Customer {CustomerId} not found", id);
+                return NotFound(new { error = "Customer not found" });
             }
             
             _logger.LogInformation("Successfully retrieved {CustomerId}", id);
@@ -51,7 +65,7 @@ public class CustomersController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogInformation(ex,"Error while retrieving {CustomerId}", id);
-            throw;
+            return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An unexpected error occurred" });
         }
         
     }
@@ -92,7 +106,7 @@ public class CustomersController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogInformation(ex,"Error while creating customer");
-            return NotFound();
+            return StatusCode(StatusCodes.Status500InternalServerError);
         }
         
     }
