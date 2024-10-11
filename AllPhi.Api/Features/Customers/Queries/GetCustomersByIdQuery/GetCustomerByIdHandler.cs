@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AllPhi.Api.Features.Customers.Queries.GetCustomersByIdQuery;
 
-public class GetCustomerByIdHandler : IRequestHandler<GetCustomerByIdQuery, CustomerDto>
+public class GetCustomerByIdHandler : IRequestHandler<GetCustomerByIdQuery, CustomerDto?>
 {
     private readonly AppDbContext _context;
 
@@ -14,7 +14,7 @@ public class GetCustomerByIdHandler : IRequestHandler<GetCustomerByIdQuery, Cust
         _context = context;
     }
     
-    public async Task<CustomerDto> Handle(GetCustomerByIdQuery request, CancellationToken cancellationToken)
+    public async Task<CustomerDto?> Handle(GetCustomerByIdQuery request, CancellationToken cancellationToken)
     {
         return await _context.Customers.Select(c => new CustomerDto(c.Id, c.FirstName, c.LastName, c.Email))
             .FirstOrDefaultAsync(c => c.Id == request.Id, cancellationToken: cancellationToken);
