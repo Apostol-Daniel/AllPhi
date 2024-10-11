@@ -1,4 +1,4 @@
-namespace AllPhi.Api.Models;
+namespace AllPhi.Api.Data.Models;
 
 public class Order
 {

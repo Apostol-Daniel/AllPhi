@@ -1,4 +1,4 @@
-using AllPhi.Api.Models;
+using AllPhi.Api.Data.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace AllPhi.Api.Data;

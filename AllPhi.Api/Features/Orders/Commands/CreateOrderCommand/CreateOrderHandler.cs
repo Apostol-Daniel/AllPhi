@@ -1,7 +1,7 @@
 using AllPhi.Api.Data;
+using AllPhi.Api.Data.Models;
 using AllPhi.Api.Features.Orders.Dtos;
 using AllPhi.Api.Middleware.Exceptions;
-using AllPhi.Api.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
